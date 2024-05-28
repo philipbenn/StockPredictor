@@ -1,53 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <h1>Stock Predictor</h1>
-    
+
     <h2>Test Data (5 Days leading up to the Prediction)</h2>
 
     <table>
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Open</th>
-                <th>Close</th>
-                <th>High</th>
-                <th>Low</th>
-            </tr>
-        </thead>
+      <thead>
+        <tr>
+          <th>Open</th>
+          <th>Close</th>
+          <th>High</th>
+          <th>Low</th>
+        </tr>
+      </thead>
 
-        <tbody>
-
-        </tbody>
+      <tbody id="test-data-body"></tbody>
     </table>
 
     <h2>Predicted Values</h2>
 
     <table>
-        <thead>
-            <tr>
-                <th>Open</th>
-                <th>Close</th>
-                <th>High</th>
-                <th>Low</th>
-            </tr>
-        </thead>
+      <thead>
+        <tr>
+          <th>Open</th>
+          <th>Close</th>
+          <th>High</th>
+          <th>Low</th>
+        </tr>
+      </thead>
 
-        <tbody>
-            <tr>
-                <td id="prediction-open"></td>
-                <td id="prediction-close"></td>
-                <td id="prediction-high"></td>
-                <td id="prediction-low"></td>
-            </tr>
-        </tbody>
+      <tbody>
+        <tr>
+          <td id="prediction-open"></td>
+          <td id="prediction-close"></td>
+          <td id="prediction-high"></td>
+          <td id="prediction-low"></td>
+        </tr>
+      </tbody>
     </table>
-    
-</body>
+
+    <script>
+      const testData = [
+        [5267.84, 5340.26, 5341.88, 5256.93],
+        [5307.01, 5319.28, 5323.18, 5286.01],
+        [5321.41, 5298.69, 5324.32, 5297.87],
+        [5308.13, 5305.35, 5325.32, 5302.4],
+        [5303.27, 5303.1, 5305.45, 5283.59],
+      ];
+
+      const testDataBody = document.getElementById("test-data-body");
+
+      testData.forEach((dayData) => {
+        const row = document.createElement("tr");
+        dayData.forEach((value) => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+        testDataBody.appendChild(row);
+      });
+    </script>
+  </body>
 </html>
