@@ -11,9 +11,8 @@
         }
 
         table {
-            width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
         th, td {
@@ -30,9 +29,9 @@
 <body>
 <h1>Stock Predictor</h1>
 
+<!-- Form for input data -->
 <h2>Test Data (5 Days leading up to the Prediction)</h2>
-
-<form action="/" method="post">
+<form action="/" method="post" id="input-form">
     <table>
         <thead>
         <tr>
@@ -60,23 +59,23 @@
 <!-- Button to fill in data with hardcoded numbers -->
 <button onclick="fillData()">Fill with Hardcoded Data</button>
 
-<p>{{ predictions }}</p>
-
+<!-- Predictions table -->
+<div id="predictions-table"></div>
 
 <script>
     function fillData() {
+        const testData = [
+            [5267.84, 5340.26, 5341.88, 5256.93],
+            [5307.01, 5319.28, 5323.18, 5286.01],
+            [5321.41, 5298.69, 5324.32, 5297.87],
+            [5308.13, 5305.35, 5325.32, 5302.4],
+            [5303.27, 5303.1, 5305.45, 5283.59],
+        ];
+
         const openInputs = document.querySelectorAll('input[name^="open"]');
         const closeInputs = document.querySelectorAll('input[name^="close"]');
         const highInputs = document.querySelectorAll('input[name^="high"]');
         const lowInputs = document.querySelectorAll('input[name^="low"]');
-
-        const testData = [
-        [5267.84, 5340.26, 5341.88, 5256.93],
-        [5307.01, 5319.28, 5323.18, 5286.01],
-        [5321.41, 5298.69, 5324.32, 5297.87],
-        [5308.13, 5305.35, 5325.32, 5302.4],
-        [5303.27, 5303.1, 5305.45, 5283.59],
-      ];
 
         testData.forEach((data, index) => {
             openInputs[index].value = data[0];
@@ -84,29 +83,58 @@
             highInputs[index].value = data[2];
             lowInputs[index].value = data[3];
         });
-
-        /* openInputs.forEach((input, index) => {
-            input.value = 5000 + index * 100;
-        });
-
-        closeInputs.forEach((input, index) => {
-            input.value = 4900 + index * 100;
-        });
-
-        highInputs.forEach((input, index) => {
-            input.value = 5100 + index * 100;
-        });
-
-        lowInputs.forEach((input, index) => {
-            input.value = 4800 + index * 100;
-        }); */
     }
 
-    // Log messages to the browser console
-    {% if console_logs %}
-        const logs = {{ console_logs|tojson|safe }};
-        logs.forEach(log => console.log(log));
-    {% endif %}
+    // Predictions table will be generated dynamically upon form submission
+    document.getElementById('input-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Collect form data
+        const formData = new FormData(this);
+
+        // Send form data to server for prediction
+        fetch('/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Generate predictions table
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            const headers = ['Open Prediction', 'Close Prediction', 'High Prediction', 'Low Prediction'];
+            const headerRow = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const predictions = data.predictions;
+            predictions.forEach(prediction => {
+                const row = document.createElement('tr');
+                prediction.forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.textContent = value.toFixed(2); // Round to 2 decimal places
+                    row.appendChild(cell);
+                });
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+
+            const predictionsTable = document.getElementById('predictions-table');
+            predictionsTable.innerHTML = '';
+            predictionsTable.appendChild(table);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
 </script>
 
 </body>

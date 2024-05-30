@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
@@ -28,13 +28,17 @@ def predict():
             
             input_data = np.array([data])
 
-            console_logs = [f"Input Data: {input_data.tolist()}"]
 
             print("Input Data:", input_data)
 
+            # Make prediction
             predictions = model.predict(input_data)
 
-            return render_template('index.html', predictions=predictions, console_logs=console_logs)
+            # Format predictions as a list of lists
+            predictions_list = predictions.tolist()
+
+            # Return predictions as JSON
+            return jsonify(predictions=predictions_list)
         
         except Exception as e:
             print("Error Loading Model:", e)
